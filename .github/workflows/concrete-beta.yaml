@@ -1,0 +1,78 @@
+name: Build and deploy Concrete beta
+on:
+  push:
+    paths:
+      - 'dyco/**'
+    branches:
+      - beta
+  workflow_dispatch:
+      inputs:
+        purpose:
+          description: 'Please fill the purpose of manual trigger'
+          required: true
+          default: ''
+  repository_dispatch:
+    types: ['contentful.deploy-dyco-beta']
+
+concurrency:
+  group: 'dyco-${{ github.event_name }}'
+  cancel-in-progress: true
+
+env:
+  GATSBY_CONTENTFUL_ACCESS_TOKEN: ${{ secrets.GATSBY_CONTENTFUL_ACCESS_TOKEN_DYCO_TEST}}
+  GATSBY_CONTENTFUL_SPACE_ID: ${{ secrets.GATSBY_CONTENTFUL_SPACE_ID_DYCO_TEST }}
+  GATSBY_CONTENTFUL_ENVIRONMENT: stage
+  SERVER_URL: "phpstack-693884-4413502.cloudwaysapps.com"
+  APP_PATH: /home/master/applications/ehuecprtzm/public_html/
+jobs:
+  build_and_deploy:
+    runs-on: gha-internal
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: beta
+      - name: Print reason of rerun when manual trigger
+        if: ${{  github.event.inputs.purpose }}
+        run: |
+          echo "[INFO]: ${{ github.event.inputs.purpose }}"
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Setup connection to remote server
+        run: |
+          # sudo apt-get -yq update && sudo apt-get -yqq install ssh
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ env.SERVER_URL }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.PRIVATE_SSH_KEY_BETA }}" > ~/.ssh/github_actions_ssh_key
+          chmod 600 ~/.ssh/github_actions_ssh_key
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ./dyco/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-          
+      - name: Build
+        working-directory: ./dyco
+        run: |
+          npm install && npm run build
+      - name: Generate version
+        working-directory: ./dyco/public
+        run: |
+          echo "Last Commit Hash: ${{ github.sha }}" > version.txt
+          echo "Branch Name: ${{ github.ref }}" >> version.txt
+          echo "Build Date: $(date)" >> version.txt          
+      - name: Deploy to Cloudways
+        working-directory: ./dyco
+        run: |
+          echo "put -r public/* /public_html/" | sftp -i ~/.ssh/github_actions_ssh_key ${{ secrets.BETA_ENV_DYCO_SFTP_USER }}@${{ env.SERVER_URL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dyco
+          path: ./dyco/public

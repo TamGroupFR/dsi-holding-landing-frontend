@@ -1,0 +1,55 @@
+name: Build and deploy TAM Test
+on:
+  push:
+    paths:
+      - 'tam/**'
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      purpose:
+        description: 'Please fill the purpose of manual trigger'
+        required: true
+        default: ''
+  repository_dispatch:
+    types: ['contentful.deploy']
+
+env:
+  SERVER_URL: "phpstack-693884-2341939.cloudwaysapps.com"
+  GATSBY_CONTENTFUL_SPACE_ID: 'xbq8te6l92zd'
+  GATSBY_CONTENTFUL_ACCESS_TOKEN: ${{ secrets.GATSBY_CONTENTFUL_ACCESS_TOKEN_TEST }}
+  GATSBY_ALGOLIA_APP_ID: 'CO337NHSVY'
+  GATSBY_ALGOLIA_SEARCH_KEY: ${{ secrets.GATSBY_ALGOLIA_SEARCH_KEY_TEST }}
+  GATSBY_ALGOLIA_ADMIN_KEY: ${{ secrets.GATSBY_ALGOLIA_ADMIN_KEY_TEST }}
+  GATSBY_ALGOLIA_INDEX_FR: 'dev_tam_fr-FR'
+  GATSBY_ALGOLIA_INDEX_EN: 'dev_tam_en-US'
+jobs:
+  build_and_deploy:
+    runs-on: gha-internal-dsi # ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Print reason of rerun when manual trigger
+        if: ${{  github.event.inputs.purpose }}
+        run: |
+          echo "[INFO]: ${{ github.event.inputs.purpose }}"
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Setup connection to remote server
+        run: |
+          sudo apt-get -yq update && sudo apt-get -yqq install ssh
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ env.SERVER_URL }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.TAM_PRIVATE_SSH_KEY }}" > ~/.ssh/github_actions_ssh_key
+          chmod 600 ~/.ssh/github_actions_ssh_key
+      - name: Build
+        working-directory: ./tam
+        run: |
+          npm install && npm run build
+      - name: Deploy to Cloudways
+        working-directory: ./tam
+        run: |
+          echo "put -r public/* /public_html/" | sftp -v -i ~/.ssh/github_actions_ssh_key ${{ secrets.NEW_TEST_ENV_TAM_SFTP_USER }}@${{ env.SERVER_URL }}
+          

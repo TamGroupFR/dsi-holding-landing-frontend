@@ -1,0 +1,158 @@
+{
+  "common": {
+    "home": "Accueil",
+    "brands": "Marques",
+    "aboutUs": "A propos de nous",
+    "contact": "Contact",
+    "company": "Entreprise",
+    "languages": "Langues",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsAndConditions": "Conditions d'utilisation",
+    "visitWebsite": "Visiter le site web",
+    "otherBrands": "Page des sous-marques",
+    "readMore": "En savoir plus",
+    "accept": "Accepter",
+    "reject": "Rejeter",
+    "email": "Email",
+    "call": "Appeler",
+    "getInTouch": "Prendre contact",
+    "downloads": "Pour télécharger",
+    "download": "télécharger",
+    "open": "ouvrir",
+    "catalogue": "Catalogue",
+    "new": "NOUVEAUTÉ CHEZ TAM GROUPE"
+  },
+  "languages": {
+    "en-US": "English",
+    "pl-PL": "Polski",
+    "de-DE": "Deutsch",
+    "fr-FR": "Français"
+  },
+  "footer": {
+    "copyright": "Tous droits réservés"
+  },
+  "homepage": {
+    "hero": {
+      "title": "<span class='text-primary'>Rapide et direct.</span> L’offre de solutions la plus large du marché pour les accessoires béton en France.",
+      "desc": "L’équipe commerciale de TAM Groupe représente la combinaison des marques Technique Béton, Artéon, et Mandelli-Setra. Nous disposons de 8 centres de distribution et 5 usines.",
+      "cta": "Prendre contact",
+      "stats": [
+        {
+          "name": "45",
+          "value": "Technico - Commerciaux"
+        },
+        {
+          "name": "~9.200",
+          "value": "Livraisons par mois"
+        },
+        {
+          "name": "2.545",
+          "value": "Client par an"
+        },
+        {
+          "name": "48 hrs",
+          "value": "Délai moyen par commande"
+        }
+      ]
+    },
+    "about": {
+      "desc1": "TAM Groupe est une société française proposant la plus grande gamme de produits de construction pour l'industrie du béton. Nous sommes spécialisés dans la fabrication et la commercialisation des produits chimiques pour la construction, d'accessoires en plastique pour le béton armé, et de matériel de levage et de fixation pour les éléments préfabriqués.",
+      "readMore": "En savoir plus",
+      "cta": "Trouvez votre représentant local"
+    },
+    "products": {
+      "title": "Découvrez notre gamme de produits",
+      "desc": "TAM Groupe fabrique des marques d'accessoires pour le béton reconnues sur le marché européen de la construction depuis plus de 60 ans. Elles couvrent aujourd'hui le cycle de vie complet de la structure béton, de la construction à l'entretien"
+    },
+    "resellers": {
+      "title": "Depuis 1957, nous sommes le fournisseur des gestionnaires de sites et des services achat de sièges sociaux",
+      "desc1": "Les responsables des chantiers de construction industriels, commerciaux et résidentiels s’inquiètent tous de venir à manquer d’accessoires en béton et du blocage qui s’en suivrait pour leurs équipes.",
+      "desc2": "Basés localement, nos commerciaux sont dotés d’une expertise technique. Par ailleurs, nous fabriquons une large gamme de produits. Cela vous permet de mener à bien votre projet en toute sérénité."
+    },
+    "everywhere": {
+      "title": "Nous sommes partout!",
+      "desc": "Même si vous ne les remarquez pas, nos produits constituent la partie la plus importante de la construction: les fondations. Vous les trouverez dans votre centre commercial habituel, le stade de football de votre équipe préférée ou le musée où vous allez le weekend. Nous fournissons des produits pour différents types de constructions: industrie, commerce et résidences. <br/><br/> Être présent partout nous permet évidemment d'avoir des représentants dans toute la France. Vous avez une pénurie de matériaux sur un chantier? Vous avez besoin de conseils d'experts en matière d'application? Il vous faut un produit sur mesure? Aucun défi ne nous résiste."
+    },
+    "unique": {
+      "title": "Ce qui nous démarque?",
+      "content": [
+        {
+          "name": "Personnalisation",
+          "value": "nous réagissons rapidement aux besoins et exigences du marché et nous créons des produits innovants et des solutions sur mesure pour un avenir plus durable."
+        },
+        {
+          "name": "Conseils techniques",
+          "value": "nous plaçons la barre toujours plus haut en matière de compétences techniques et nous échangeons avec nos clients à chaque étape du projet. Les centres de recherche et développement de TAM Groupe réalisent des tests fiables, garantissant ainsi à nos clients qu'ils choisissent les meilleurs produits en faisant confiance à TAM Groupe."
+        },
+        {
+          "name": "Tournés vers l'avenir",
+          "value": "nous sommes leaders de notre secteur pour la transformation vers des pratiques plus durables et respectueuses de l'environnement."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Les clients ont écrit",
+      "content": [
+        {
+          "text": "Je suis très satisfait de l’ensemble de la qualité des produits. De plus, le service commercial est d’autant plus avantageux.",
+          "title": "Chef de chantier, LTE",
+          "author": "José Mendes"
+        },
+        {
+          "text": "Les produits et leur délai de livraison sont à la hauteur de ma demande et cela est très important aujourd’hui. Le service commercial est également très important car il contribue d’autant plus à ma satisfaction.",
+          "title": "Chef de chantier, Spie Batignolles",
+          "author": "Johnny Ferreira"
+        }
+      ]
+    },
+    "regions": {
+      "title": "Trouvez votre représentant local",
+      "centers": "Centres de fabrication"
+    },
+    "clients": {
+      "title": "Les clients"
+    },
+    "owner": {
+      "title": "Un message de notre Président",
+      "desc": "Nous avons allié nos marques pour faciliter la disponibilité de toute notre gamme de produits, partout en France et simplifier les commandes et les livraisons.",
+      "sign": "Ian Jarvis, President, DYWIDAG Concrete Technologies"
+    }
+  },
+  "about": {
+    "whoWeAreTitle": "Qui sommes-nous?",
+    "whoWeAreText1": "TAM Groupe est une société française proposant la plus grande gamme de produits de construction pour l'industrie du béton.",
+    "whoWeAreText2": "Nous sommes spécialisés dans la fabrication et la commercialisation des produits chimiques pour la construction, d'accessoires en plastique pour le béton armé, et de matériel de levage et de fixation pour les éléments préfabriqués.",
+    "whoWeAreText3": "Le \"TAM\" de TAM Groupe signifie Technique Béton, Arteon et Mandelli-Setra, mais aussi Tradition, Agilité et gamme Multiproduit.",
+    "whoWeAreText4": "TAM Groupe est l'unité opérationnelle de <a class='underline' href='https://dywidag.com'>DYWIDAG</a> dédiée aux accessoires de construction.",
+    "numberOneTitle": "Notre mission",
+    "numberOneSubtitle": "1re société d'accessoires de construction en Europe",
+    "numberOneText1": "Notre objectif est de devenir un leader technologique et innovant avec une conscience sociale. Nous voulons attirer les meilleurs talents et être le meilleur partenaire de travail possible.",
+    "buildingFutureTitle": "Notre vision",
+    "buildingFutureSubtitle": "Créer un avenir meilleur",
+    "buildingText1": "Les plans d'action mondiaux, l'évolution démographique et les attentes des clients poussent le secteur de la construction à évoluer. Le lien entre processus de construction et environnement ne fait que se renforcer. Les produits, les solutions et la chaîne logistique s'adaptent pour répondre à des besoins de rapidité, de fiabilité et de collaboration toujours croissants.",
+    "buildingText2": "Nous reconnaissons l'importance de ces tendances mondiales et souhaitons impulser le changement dans notre secteur. Grâce à notre gamme de produits, nous soutenons le passage à davantage de construction hors site, une meilleure prise en compte de l'impact environnemental de la construction et nous nous engageons à contribuer à un avenir durable.",
+    "buildingText3": "Nous formons une grande équipe, dont la vision consiste à créer un avenir plus sûr, plus prévisible et plus durable.",
+    "brandsText1": "TAM Groupe fabrique des marques d'accessoires pour le béton reconnues sur le marché européen de la construction depuis 1957. Elles couvrent aujourd'hui le cycle de vie complet de la structure béton, de la construction à l'entretien: fondations, étanchéité, joints structurels, réparations, outils de fixation et de levage."
+  },
+  "contact": {
+    "title": "Laissez-nous vous mettre en contact avec un <span class='text-primary'>représentant local.</span>"
+  },
+  "cookiesBanner": {
+    "title": "Cookies",
+    "desc": "Nous, ainsi que des partenaires sélectionnés, utilisons des cookies ou des technologies similaires, comme indiqué dans la",
+    "privacyPolicy": "politique&nbsp;de&nbsp;confidentialité"
+  },
+  "brand": {
+    "stats": {
+      "businessPartners": "Partenaires commerciaux",
+      "yearsInBusiness": "Ancienneté",
+      "countriesInEurope": "Pays desservis en Europe"
+    },
+    "contact": {
+      "title": "Parlons-en et construisons quelque chose ensemble"
+    }
+  },
+  "roles": {
+    "productCategoryManager": "Product Category Manager"
+  }
+}

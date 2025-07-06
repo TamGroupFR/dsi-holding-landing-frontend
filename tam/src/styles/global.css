@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+@layer components {
+  .grid-layout {
+    @apply grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-x-4 md:gap-x-6 lg:gap-x-8;
+  }
+}
+
+.breadcrumb:not(:last-child) {
+  text-decoration: underline;
+}
+
+.breadcrumb:last-child {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.table .cell p,
+.table .header-cell p {
+  margin-bottom: 0;
+  overflow-wrap: break-word;
+  hyphens: manual;
+}
+
+.truncate-lines-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.reset-child > * {
+  all: unset;
+}
+.fill-current:hover svg path {
+  fill: #3c82f6;
+}
+
+.list li {
+  margin-left: 16px;
+}
+
+.list ul li {
+  list-style: disc;
+}
+
+.list ol li {
+  list-style: decimal;
+}
+
+.list li p {
+  margin-bottom: 10px;
+}

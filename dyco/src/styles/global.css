@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+@layer components {
+  .grid-layout {
+    @apply grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-x-4 md:gap-x-6 lg:gap-x-8;
+  }
+}
+
+.arrow {
+  position: relative;
+
+  &::before {
+    content: '';
+    display: none;
+    position: absolute;
+    top: -5px;
+    left: calc(50% - 1px);
+    transform: translatex(-40%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid #C92836;
+  }
+  @media (min-width: 768px) {
+    &::before {
+      display: block;
+    }
+  }
+}
+
+.arrow-down {
+  position: relative;
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: -10px;
+    left: calc(50% - 1px);
+    transform: translatex(-40%);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #a3a3a3;
+  }
+
+  &:hover::before {
+    border-top: 10px solid #C92836;
+  }
+}
+
+.table-hover {
+  background: #f9f9f9;
+}
+
+.table-eurocode {
+  width: 343px;
+}
+
+.table-eurocode th p {
+  margin: 0
+}
+
+.table-eurocode th:first-child {
+  width: 210px;
+  max-width: 210px;
+}
+
+.table-eurocode th:nth-child(2) {
+  width: 70px;
+  max-width: 70px;
+}
+
+.table-eurocode th:nth-child(3) {
+  width: 170px;
+  max-width: 170px;
+}
+
+.html-link a {
+    text-decoration: none;
+    
+}
+
+.html-link a:hover {
+  text-decoration: underline;
+}
+
+.brands ul li{
+  text-align: center;
+}

@@ -1,0 +1,158 @@
+{
+  "common": {
+    "home": "Home",
+    "brands": "Brands",
+    "aboutUs": "About us",
+    "contact": "Contact",
+    "company": "Company",
+    "languages": "Languages",
+    "privacyPolicy": "Privacy Policy",
+    "termsAndConditions": "Terms and conditions",
+    "visitWebsite": "Visit website",
+    "otherBrands": "Other brands",
+    "readMore": "Read more",
+    "accept": "Accept",
+    "reject": "Reject",
+    "email": "Email",
+    "call": "Call",
+    "getInTouch": "Get in touch",
+    "downloads": "Downloads",
+    "download": "Download",
+    "open": "Open",
+    "catalogue": "Catalogue",
+    "new": "NEW AT TAM GROUP"
+  },
+  "languages": {
+    "en-US": "English",
+    "pl-PL": "Polski",
+    "de-DE": "Deutsch",
+    "fr-FR": "Français"
+  },
+  "footer": {
+    "copyright": "All rights reserved"
+  },
+  "homepage": {
+    "hero": {
+      "title": "<span class='text-primary'>Fast, direct</span> deliveries and the widest supply of concrete constructions materials in France",
+      "desc": "TAM Groupe is the combined technical sales team of Technique Beton, Arteon and Mandelli - Setra with 8 distribution hubs and 5 factories",
+      "cta": "Get in touch",
+      "stats": [
+        {
+          "name": "45",
+          "value": "Technical Sales Rep"
+        },
+        {
+          "name": "~9.200",
+          "value": "Deliveries a Month"
+        },
+        {
+          "name": "2.545",
+          "value": "Annual Customers"
+        },
+        {
+          "name": "48 hrs",
+          "value": "Average order to Delivery"
+        }
+      ]
+    },
+    "about": {
+      "desc1": "TAM Groupe is a French company with the largest construction product portfolio for the concrete industry in the country. We specialize in the manufacture and distribution of construction chemicals, plastic accessories for reinforced concrete, and lifting and fixing for precast.",
+      "readMore": "Read about us",
+      "cta": "Find your regional rep"
+    },
+    "products": {
+      "title": "Explore our product range",
+      "desc": "TAM Groupe is the home of trusted concrete accessories brands that have been part of the European construction market for more than 60 years. Our brands cover the full concrete structure life cycle – from construction to maintenance"
+    },
+    "resellers": {
+      "title": "We have been supplying site managers and head office procurement since 1957",
+      "desc1": "Industrial, commercial and residential construction sites all worry about running out of concrete accessories and stalling their crews",
+      "desc2": "Our technically savvy local sales reps and wide product range manufacturing help keep your project moving"
+    },
+    "everywhere": {
+      "title": "We are everywhere",
+      "desc": "While you may not notice them at first, our products are part of what matters most in construction: the foundation. You’ll find them at your local shopping center, favorite team’s stadium, and the museum you visit with friends. We supply products for industrial, commercial, and residential construction. <br/><br/> We're everywhere also means that our representatives are available throughout France. Are you short of materials on a construction site, need expert application advice, or a tailor-made product? We can take on any challenge."
+    },
+    "unique": {
+      "title": "What makes us unique",
+      "content": [
+        {
+          "name": "Tailoring",
+          "value": "We quickly respond to market needs and requirements and create innovative products and tailored solutions for a more sustainable future"
+        },
+        {
+          "name": "Technical orientation",
+          "value": "We demonstrate consistently high standards of technical competence, consulting with customers at every stage of the project. TAM Groupe’s research and development centers allow for reliable testing; customers can feel confident and safe choosing TAM Groupe products for their projects"
+        },
+        {
+          "name": "Leadership",
+          "value": "We are leading the transformation of our industry to become more environmentally conscious and sustainable"
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Testimonials",
+      "content": [
+        {
+          "text": "I’m very satisfied with the overall quality of the products. Furthermore, the sales service is all the more advantageous.",
+          "title": "Site Manager, LTE",
+          "author": "Jose Mendes"
+        },
+        {
+          "text": "Products and delivery time meet the demand. The sales department is also very important because it contributes to my satisfaction.",
+          "title": "Site Manager, Spie Batignolles",
+          "author": "Johhny Ferreira"
+        }
+      ]
+    },
+    "regions": {
+      "title": "Find your local rep",
+      "centers": "Manufacturing Centres"
+    },
+    "clients": {
+      "title": "Clients have included"
+    },
+    "owner": {
+      "title": "Message from our President",
+      "desc": "We’ve combined our brands to facilitate the availability of our full product range across France — and simplified ordering and delivery.",
+      "sign": "Ian Jarvis, President, DYWIDAG Concrete Technologies"
+    }
+  },
+  "about": {
+    "whoWeAreTitle": "Who are we?",
+    "whoWeAreText1": "TAM Groupe is a French company with the largest construction product portfolio for the concrete industry in the country.",
+    "whoWeAreText2": "We specialize in the manufacture and distribution of construction chemicals, plastic accessories for reinforced concrete, and lifting and fixing for precast.",
+    "whoWeAreText3": "The TAM of TAM Groupe stands for Technique Beton, Arteon, and Mandelli-Setra, and for Tradition, Agility, and a Multiproduct portfolio.",
+    "whoWeAreText4": "TAM Groupe is a part of <a class='underline' href='https://dy.co'>DYWIDAG Concrete Technologies</a>, the construction accessories business unit of <a class='underline' href='https://dywidag.com'>DYWIDAG</a>.",
+    "numberOneTitle": "Our mission",
+    "numberOneSubtitle": "Number 1 construction accessories company in Europe",
+    "numberOneText1": "Our mission is to be recognized as the socially responsible leader in innovation and technology. We want to attract the best talent and be the best partner to work with for our stakeholders.",
+    "buildingFutureTitle": "Our vision",
+    "buildingFutureSubtitle": "Helping build better future",
+    "buildingText1": "Global agendas, changing demographics, and customer expectations are transforming the construction industry. As construction processes and the environment become increasingly interconnected, so products, solutions and the supply chain is adapting to meet the increasing need for speed, reliability, and collaboration.",
+    "buildingText2": "We recognize global trends and aim to be at the forefront of change in our industry. Through our product offering, we are supporting the shift to greater off-site construction, increased awareness of the impact construction has on the environment, and to ensuring we contribute positively to a sustainable future.",
+    "buildingText3": "We are one team, sharing a vision to ensure a safer, predictable, and sustainable future.",
+    "brandsText1": "TAM Groupe is the home of trusted concrete accessories brands that have been part of the European construction market since 1957. Our brands cover the full concrete structure life cycle – from construction to maintenance – including foundations, waterproofing, structural joints, concrete repairs, precast fixings, and lifting."
+  },
+  "contact": {
+    "title": "Let us connect you with a <span class='text-primary'>local rep</span>"
+  },
+  "cookiesBanner": {
+    "title": "Notice",
+    "desc": "We and selected partners use cookies or similar technologies as specified in the",
+    "privacyPolicy": "privacy&nbsp;policy"
+  },
+  "brand": {
+    "stats": {
+      "businessPartners": "Business Partners",
+      "yearsInBusiness": "Years in Business",
+      "countriesInEurope": "Countries served in Europe"
+    },
+    "contact": {
+      "title": "Let’s talk and build something together"
+    }
+  },
+  "roles": {
+    "productCategoryManager": "Product Category Manager"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "common": {
+    "close": "Close",
+    "reject": "Reject",
+    "accept": "Accept"
+  },
+  "languages": {
+    "en": "English",
+    "pl": "Polski",
+    "de": "Deutsch",
+    "fr": "Français"
+  },
+  "cookiesBanner": {
+    "title": "Notice",
+    "desc": "We and selected partners use cookies or similar technologies as specified in the",
+    "privacyPolicy": "privacy&nbsp;policy."
+  }
+}
