@@ -32,6 +32,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Check Algolia env vars
+        run: |
+          echo "Algolia APP ID: $GATSBY_ALGOLIA_APP_ID"
+          if [ -z "$GATSBY_ALGOLIA_ADMIN_KEY" ]; then
+            echo "Algolia Admin Key no está definida"
+            exit 1
+          else
+            echo "Algolia Admin Key está definida"
+          fi
+
       - name: Print reason of rerun when manual trigger
         if: ${{ github.event.inputs.purpose != '' }}
         run: |
@@ -50,15 +60,6 @@ jobs:
           echo "${{ secrets.TAM_PRIVATE_SSH_KEY }}" > ~/.ssh/github_actions_ssh_key
           chmod 600 ~/.ssh/github_actions_ssh_key
 
-      - name: Check Algolia env vars
-        run: |
-          echo "Algolia APP ID: $GATSBY_ALGOLIA_APP_ID"
-          if [ -z "$GATSBY_ALGOLIA_ADMIN_KEY" ]; then
-            echo "Algolia Admin Key no está definida"
-            exit 1
-          else
-            echo "Algolia Admin Key está definida"
-          fi
       - name: Build
         working-directory: ./tam
         run: |
