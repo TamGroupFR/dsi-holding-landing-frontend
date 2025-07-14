@@ -52,4 +52,9 @@ jobs:
         working-directory: ./tam
         run: |
           echo "put -r public/* /public_html/" | sftp -v -i ~/.ssh/github_actions_ssh_key ${{ secrets.NEW_TEST_ENV_TAM_SFTP_USER }}@${{ env.SERVER_URL }}
+      - name: Export products to Algolia
+        working-directory: ./Algolia/Script
+        run: |
+          chmod +x export_products.sh
+          ./export_products.sh
           
