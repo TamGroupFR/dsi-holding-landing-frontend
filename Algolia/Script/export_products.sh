@@ -11,12 +11,14 @@ ALGOLIA_INDEX_NAME_EN="tam_page_english"
 PAGE_SIZE=1000
 SKIP=0
 PAGE=1
+FILES_DIR="./Algolia/Files"
+mkdir -p "$FILES_DIR"
 FILES=()
 
 echo "⬇️ Starting product download…"
 
 while true; do
-  FILE="products_raw_${PAGE}.json"
+  FILE="$FILES_DIR/products_raw_${PAGE}.json"
   echo "⬇️ Downloading page $PAGE (records $SKIP to $((SKIP + PAGE_SIZE - 1)))…"
   curl -s \
     "https://cdn.contentful.com/spaces/$SPACE_ID/environments/master/entries?access_token=$ACCESS_TOKEN&limit=$PAGE_SIZE&include=3&skip=$SKIP" \
@@ -44,7 +46,7 @@ jq -s '
       Asset: (map(.includes.Asset // []) | add)
     }
   }
-' "${FILES[@]}" > products_raw.json
+' "${FILES[@]}" > "$FILES_DIR/products_raw.json"
 
 echo "🎯 Transforming JSON for Algolia…"
 
@@ -133,13 +135,13 @@ jq -r '
       )
     }
   ]
-' products_raw.json > products_algolia.json
+' "$FILES_DIR/products_raw.json" > "$FILES_DIR/products_algolia.json"
 
-echo "✅ Exported to products_algolia.json"
+echo "✅ Exported to $FILES_DIR/products_algolia.json"
 
 echo "📦 Preparing data for Algolia…"
 
-jq '{ requests: [.[] | { action: "addObject", body: . }] }' products_algolia.json > products_batch.json
+jq '{ requests: [.[] | { action: "addObject", body: . }] }' "$FILES_DIR/products_algolia.json" > "$FILES_DIR/products_batch.json"
 
 echo "🚀 Sending data to Algolia (fr)…"
 
@@ -147,7 +149,7 @@ curl -s -X POST \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
   -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
   -H "Content-Type: application/json" \
-  --data-binary @products_batch.json \
+  --data-binary @"$FILES_DIR/products_batch.json" \
   "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME/batch"
 
 echo "✅ Data sent to French index: $ALGOLIA_INDEX_NAME."
@@ -158,7 +160,7 @@ curl -s -X POST \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
   -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
   -H "Content-Type: application/json" \
-  --data-binary @products_batch.json \
+  --data-binary @"$FILES_DIR/products_batch.json" \
   "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME_EN/batch"
 
 echo "✅ Data sent to English index: $ALGOLIA_INDEX_NAME_EN."
