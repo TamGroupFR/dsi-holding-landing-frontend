@@ -11,21 +11,26 @@ ALGOLIA_INDEX_NAME_EN="tam_page_english"
 PAGE_SIZE=1000
 SKIP=0
 PAGE=1
-FILES_DIR="./Algolia/Files"
-mkdir -p "$FILES_DIR"
-FILES=()
+
+ALL_ITEMS="[]"
+ALL_ENTRIES="[]"
+ALL_ASSETS="[]"
 
 echo "⬇️ Starting product download…"
 
 while true; do
-  FILE="$FILES_DIR/products_raw_${PAGE}.json"
   echo "⬇️ Downloading page $PAGE (records $SKIP to $((SKIP + PAGE_SIZE - 1)))…"
-  curl -s \
-    "https://cdn.contentful.com/spaces/$SPACE_ID/environments/master/entries?access_token=$ACCESS_TOKEN&limit=$PAGE_SIZE&include=3&skip=$SKIP" \
-    > "$FILE"
+  RESPONSE=$(curl -s "https://cdn.contentful.com/spaces/$SPACE_ID/environments/master/entries?access_token=$ACCESS_TOKEN&limit=$PAGE_SIZE&include=3&skip=$SKIP")
 
-  COUNT=$(jq '.items | length' "$FILE")
-  FILES+=("$FILE")
+  COUNT=$(echo "$RESPONSE" | jq '.items | length')
+  
+  ITEMS_PAGE=$(echo "$RESPONSE" | jq '.items')
+  ENTRIES_PAGE=$(echo "$RESPONSE" | jq '.includes.Entry // []')
+  ASSETS_PAGE=$(echo "$RESPONSE" | jq '.includes.Asset // []')
+
+  ALL_ITEMS=$(jq -n --argjson a "$ALL_ITEMS" --argjson b "$ITEMS_PAGE" '$a + $b')
+  ALL_ENTRIES=$(jq -n --argjson a "$ALL_ENTRIES" --argjson b "$ENTRIES_PAGE" '$a + $b')
+  ALL_ASSETS=$(jq -n --argjson a "$ALL_ASSETS" --argjson b "$ASSETS_PAGE" '$a + $b')
 
   if [ "$COUNT" -lt "$PAGE_SIZE" ]; then
     echo "📄 Last page ($COUNT records)."
@@ -37,23 +42,16 @@ while true; do
 done
 
 echo "📊 Total registros descargados de Contentful:"
-jq '[.items[] | select((.sys.contentType.sys.id == "product" or .sys.contentType.sys.id == "download"))] | length' "${FILES[@]}" | awk '{print "   Descargados: " $1}'
+TOTAL_DOWNLOADED=$(jq -n --argjson items "$ALL_ITEMS" '[.items[] | select((.sys.contentType.sys.id == "product" or .sys.contentType.sys.id == "download"))] | length' --argjson items "$ALL_ITEMS" '$items | map(select(.sys.contentType.sys.id == "product" or .sys.contentType.sys.id == "download")) | length')
+echo "   Descargados: $TOTAL_DOWNLOADED"
 
 echo "🔗 Merging JSONs…"
 
-jq -s '
-  {
-    items: (map(.items) | add),
-    includes: {
-      Entry: (map(.includes.Entry // []) | add),
-      Asset: (map(.includes.Asset // []) | add)
-    }
-  }
-' "${FILES[@]}" > "$FILES_DIR/products_raw.json"
+MERGED_JSON=$(jq -n --argjson items "$ALL_ITEMS" --argjson entries "$ALL_ENTRIES" --argjson assets "$ALL_ASSETS" '{items: $items, includes: {Entry: $entries, Asset: $assets}}')
 
 echo "🎯 Transforming JSON for Algolia…"
 
-jq -r '
+echo "$MERGED_JSON" | jq -r '
   def slugOrEmpty($entry):
     if $entry == null or $entry.fields.slug == null then "" else $entry.fields.slug end;
 
@@ -138,16 +136,16 @@ jq -r '
       )
     }
   ]
-' "$FILES_DIR/products_raw.json" > "$FILES_DIR/products_algolia.json"
+' > "products_algolia.json"
 
-echo "✅ Exported to $FILES_DIR/products_algolia.json"
+echo "✅ Exported to products_algolia.json"
 
 echo "📦 Preparing data for Algolia…"
 
-jq '{ requests: [.[] | { action: "addObject", body: . }] }' "$FILES_DIR/products_algolia.json" > "$FILES_DIR/products_batch.json"
+jq '{ requests: [.[] | { action: "addObject", body: . }] }' products_algolia.json > products_batch.json
 
 echo "📊 Total registros procesados para Algolia:"
-jq 'length' "$FILES_DIR/products_algolia.json" | awk '{print "   Procesados: " $1}'
+jq 'length' products_algolia.json | awk '{print "   Procesados: " $1}'
 
 echo "🚀 Sending data to Algolia (fr)…"
 
@@ -155,7 +153,7 @@ curl -s -X POST \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
   -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
   -H "Content-Type: application/json" \
-  --data-binary @"$FILES_DIR/products_batch.json" \
+  --data-binary @products_batch.json \
   "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME/batch"
 
 echo "✅ Data sent to French index: $ALGOLIA_INDEX_NAME."
@@ -166,7 +164,7 @@ curl -s -X POST \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
   -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
   -H "Content-Type: application/json" \
-  --data-binary @"$FILES_DIR/products_batch.json" \
+  --data-binary @products_batch.json \
   "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME_EN/batch"
 
 echo "✅ Data sent to English index: $ALGOLIA_INDEX_NAME_EN."
