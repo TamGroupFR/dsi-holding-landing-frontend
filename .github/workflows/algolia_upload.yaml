@@ -1,4 +1,4 @@
-name: Build and deploy TAM Production
+name: upload products to Algolia
 
 on:
   push:
