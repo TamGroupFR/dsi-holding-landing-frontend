@@ -4,13 +4,36 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FILES_DIR="$SCRIPT_DIR/../Files"
 mkdir -p "$FILES_DIR"
 
-SPACE_ID="xbq8te6l92zd"
-ACCESS_TOKEN="YOXBZ5FkOdbzosHpzUX49zPvKCC_2VZW-GYbNVIcqb8"
+# Variables obligatorias: si alguna falta, el script falla
+if [ -z "$SPACE_ID" ]; then
+  echo "Error: SPACE_ID no está definido."
+  exit 1
+fi
 
-ALGOLIA_APP_ID="IN6J4FC7B1"
-ALGOLIA_API_KEY="fc490f6be6dc5dd3308da42b12362b7d"
-ALGOLIA_INDEX_NAME="tam_page_french"
-ALGOLIA_INDEX_NAME_EN="tam_page_english"
+if [ -z "$ACCESS_TOKEN" ]; then
+  echo "Error: ACCESS_TOKEN no está definido."
+  exit 1
+fi
+
+if [ -z "$ALGOLIA_APP_ID" ]; then
+  echo "Error: ALGOLIA_APP_ID no está definido."
+  exit 1
+fi
+
+if [ -z "$ALGOLIA_API_KEY" ]; then
+  echo "Error: ALGOLIA_API_KEY no está definido."
+  exit 1
+fi
+
+if [ -z "$ALGOLIA_INDEX_NAME" ]; then
+  echo "Error: ALGOLIA_INDEX_NAME no está definido."
+  exit 1
+fi
+
+if [ -z "$ALGOLIA_INDEX_NAME_EN" ]; then
+  echo "Error: ALGOLIA_INDEX_NAME_EN no está definido."
+  exit 1
+fi
 
 LIMIT=1000
 
