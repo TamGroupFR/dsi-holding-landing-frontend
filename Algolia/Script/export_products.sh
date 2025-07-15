@@ -36,6 +36,9 @@ while true; do
   PAGE=$((PAGE + 1))
 done
 
+echo "📊 Total registros descargados de Contentful:"
+jq '[.items[] | select((.sys.contentType.sys.id == "product" or .sys.contentType.sys.id == "download"))] | length' "${FILES[@]}" | awk '{print "   Descargados: " $1}'
+
 echo "🔗 Merging JSONs…"
 
 jq -s '
@@ -142,6 +145,9 @@ echo "✅ Exported to $FILES_DIR/products_algolia.json"
 echo "📦 Preparing data for Algolia…"
 
 jq '{ requests: [.[] | { action: "addObject", body: . }] }' "$FILES_DIR/products_algolia.json" > "$FILES_DIR/products_batch.json"
+
+echo "📊 Total registros procesados para Algolia:"
+jq 'length' "$FILES_DIR/products_algolia.json" | awk '{print "   Procesados: " $1}'
 
 echo "🚀 Sending data to Algolia (fr)…"
 
