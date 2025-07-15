@@ -8,57 +8,64 @@ ALGOLIA_API_KEY="fc490f6be6dc5dd3308da42b12362b7d"
 ALGOLIA_INDEX_NAME="tam_page_french"
 ALGOLIA_INDEX_NAME_EN="tam_page_english"
 
-PAGE_SIZE=1000
-SKIP=0
-PAGE=1
+LIMIT=1000
 
-ALL_ITEMS="[]"
-ALL_ENTRIES="[]"
-ALL_ASSETS="[]"
+echo "⬇️ Obteniendo número total de productos..."
 
-echo "⬇️ Starting product download…"
+TOTAL=$(curl -s "https://cdn.contentful.com/spaces/$SPACE_ID/environments/master/entries?access_token=$ACCESS_TOKEN&limit=1" | jq '.total')
 
-while true; do
-  echo "⬇️ Downloading page $PAGE (records $SKIP to $((SKIP + PAGE_SIZE - 1)))…"
-  RESPONSE=$(curl -s "https://cdn.contentful.com/spaces/$SPACE_ID/environments/master/entries?access_token=$ACCESS_TOKEN&limit=$PAGE_SIZE&include=3&skip=$SKIP")
+echo "ℹ️ Total de objetos: $TOTAL"
 
-  COUNT=$(echo "$RESPONSE" | jq '.items | length')
-  
-  ITEMS_PAGE=$(echo "$RESPONSE" | jq '.items')
-  ENTRIES_PAGE=$(echo "$RESPONSE" | jq '.includes.Entry // []')
-  ASSETS_PAGE=$(echo "$RESPONSE" | jq '.includes.Asset // []')
+# Calcular número de páginas
+PAGES=$(( (TOTAL + LIMIT - 1) / LIMIT ))
 
-  ALL_ITEMS=$(jq -n --argjson a "$ALL_ITEMS" --argjson b "$ITEMS_PAGE" '$a + $b')
-  ALL_ENTRIES=$(jq -n --argjson a "$ALL_ENTRIES" --argjson b "$ENTRIES_PAGE" '$a + $b')
-  ALL_ASSETS=$(jq -n --argjson a "$ALL_ASSETS" --argjson b "$ASSETS_PAGE" '$a + $b')
+echo "ℹ️ Número de páginas a descargar: $PAGES"
 
-  if [ "$COUNT" -lt "$PAGE_SIZE" ]; then
-    echo "📄 Last page ($COUNT records)."
-    break
-  fi
+FILES=()
 
-  SKIP=$((SKIP + PAGE_SIZE))
-  PAGE=$((PAGE + 1))
+for ((i=0; i<PAGES; i++)); do
+  SKIP=$((i * LIMIT))
+  echo "⬇️ Descargando página $((i+1)) ($SKIP-$((SKIP + LIMIT -1)))..."
+  FILE="../Files/products_raw_$((i+1)).json"
+  curl -s "https://cdn.contentful.com/spaces/$SPACE_ID/environments/master/entries?access_token=$ACCESS_TOKEN&limit=$LIMIT&include=3&skip=$SKIP" > "$FILE"
+  FILES+=("$FILE")
 done
 
-echo "📊 Total registros descargados de Contentful:"
-TOTAL_DOWNLOADED=$(jq -n --argjson items "$ALL_ITEMS" '[.items[] | select((.sys.contentType.sys.id == "product" or .sys.contentType.sys.id == "download"))] | length' --argjson items "$ALL_ITEMS" '$items | map(select(.sys.contentType.sys.id == "product" or .sys.contentType.sys.id == "download")) | length')
-echo "   Descargados: $TOTAL_DOWNLOADED"
+echo "🔗 Uniendo JSONs…"
 
-echo "🔗 Merging JSONs…"
+jq -s '
+{
+  items: (map(.items) | add),
+  includes: {
+    Entry: (map(.includes.Entry // []) | add),
+    Asset: (map(.includes.Asset // []) | add)
+  }
+}
+' "${FILES[@]}" > ../Files/products_raw.json
 
-MERGED_JSON=$(jq -n --argjson items "$ALL_ITEMS" --argjson entries "$ALL_ENTRIES" --argjson assets "$ALL_ASSETS" '{items: $items, includes: {Entry: $entries, Asset: $assets}}')
+echo "🎯 Transformando JSON para Algolia..."
 
-echo "🎯 Transforming JSON for Algolia…"
+jq -r '
+def slugOrEmpty($entry):
+  if $entry == null or $entry.fields.slug == null then "" else $entry.fields.slug end;
 
-echo "$MERGED_JSON" | jq -r '
-  def slugOrEmpty($entry):
-    if $entry == null or $entry.fields.slug == null then "" else $entry.fields.slug end;
+def getFileUrl($root; $fileId):
+  if $fileId == null then "NO_FILE_FOUND"
+  else
+    (
+      ($root.includes.Asset[] | select(.sys.id == $fileId) | .fields.file.url) //
+      ($root.items[] | select(.sys.id == $fileId) | .fields.file.url) //
+      "NO_FILE_FOUND"
+    ) | if . == null or . == "" then "NO_FILE_FOUND" else (if startswith("//") then "https:" + . else . end) end
+  end;
 
-  . as $root |
+. as $root |
+
+(
   [
-    .items[] |
-    select((.sys.contentType.sys.id == "product" or .sys.contentType.sys.id == "download")) |
+    # productos
+    $root.items[] |
+    select(.sys.contentType.sys.id == "product") |
     . as $item |
 
     ($item.fields.subcategory?.sys.id // null) as $lvl3id |
@@ -83,9 +90,9 @@ echo "$MERGED_JSON" | jq -r '
 
     {
       objectID: $item.sys.id,
-      name: (if $item.sys.contentType.sys.id == "download" then $item.fields.title else $item.fields.name end),
-      slug: $item.fields.slug,
-      type: (if $item.sys.contentType.sys.id == "product" then "product" else "catalog" end),
+      name: ($item.fields.name // ""),
+      slug: ($item.fields.slug // ""),
+      type: "product",
       url: (
         if $isProduct then
           ("/all-products/" +
@@ -104,12 +111,7 @@ echo "$MERGED_JSON" | jq -r '
             )
           )
         else
-          (
-            ($root.includes.Asset[]
-              | select(.sys.id == ($item.fields.file.sys.id))
-              | .fields.file.url // ""
-            ) | if startswith("//") then "https:" + . else . end
-          )
+          "NO_FILE_FOUND"
         end
       ),
       subcategory: (
@@ -135,36 +137,56 @@ echo "$MERGED_JSON" | jq -r '
         } else null end
       )
     }
+  ] +
+  [
+    # downloads
+    $root.items[] |
+    select(.sys.contentType.sys.id == "download") |
+    {
+      objectID: .sys.id,
+      name: (.fields.title // ""),
+      slug: (.fields.slug // ""),
+      type: "catalog",
+      url: getFileUrl($root; (.fields.file.sys.id // null))
+    }
   ]
-' > "products_algolia.json"
+)
+' ../Files/products_raw.json > products_algolia.json
 
-echo "✅ Exported to products_algolia.json"
+echo "✅ Exportado a products_algolia.json"
 
-echo "📦 Preparing data for Algolia…"
+# Transformar products_algolia.json al formato batch de Algolia
+echo "🔄 Transformando JSON a formato batch para Algolia..."
+jq '{ requests: [ .[] | { action: "addObject", body: . } ] }' products_algolia.json > ../Files/products_algolia_batch.json
 
-jq '{ requests: [.[] | { action: "addObject", body: . }] }' products_algolia.json > products_batch.json
-
-echo "📊 Total registros procesados para Algolia:"
-jq 'length' products_algolia.json | awk '{print "   Procesados: " $1}'
-
-echo "🚀 Sending data to Algolia (fr)…"
-
-curl -s -X POST \
+# Subir batch al índice francés
+echo "⬆️ Subiendo batch al índice francés ($ALGOLIA_INDEX_NAME)..."
+RESPONSE_FR=$(curl -s -o /dev/null -w "%{http_code}" \
+  -X POST \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
   -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
   -H "Content-Type: application/json" \
-  --data-binary @products_batch.json \
-  "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME/batch"
+  --data-binary @../Files/products_algolia_batch.json \
+  "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME/batch")
+if [ "$RESPONSE_FR" -ge 200 ] && [ "$RESPONSE_FR" -lt 300 ]; then
+  echo "✅ Batch subido correctamente al índice francés."
+else
+  echo "❌ Error al subir el batch al índice francés. Código HTTP: $RESPONSE_FR"
+fi
 
-echo "✅ Data sent to French index: $ALGOLIA_INDEX_NAME."
-
-echo "🚀 Sending data to Algolia (en)…"
-
-curl -s -X POST \
+# Subir batch al índice inglés
+echo "⬆️ Subiendo batch al índice inglés ($ALGOLIA_INDEX_NAME_EN)..."
+RESPONSE_EN=$(curl -s -o /dev/null -w "%{http_code}" \
+  -X POST \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
   -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
   -H "Content-Type: application/json" \
-  --data-binary @products_batch.json \
-  "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME_EN/batch"
+  --data-binary @../Files/products_algolia_batch.json \
+  "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME_EN/batch")
+if [ "$RESPONSE_EN" -ge 200 ] && [ "$RESPONSE_EN" -lt 300 ]; then
+  echo "✅ Batch subido correctamente al índice inglés."
+else
+  echo "❌ Error al subir el batch al índice inglés. Código HTTP: $RESPONSE_EN"
+fi
 
-echo "✅ Data sent to English index: $ALGOLIA_INDEX_NAME_EN."
+echo "🚀 Proceso de subida a Algolia finalizado."
