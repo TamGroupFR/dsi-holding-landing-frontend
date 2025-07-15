@@ -51,10 +51,9 @@ jobs:
       - name: Deploy to Cloudways
         working-directory: ./tam
         run: |
-          echo "put -r public/* /public_html/" | sftp -v -i ~/.ssh/github_actions_ssh_key ${{ secrets.NEW_TEST_ENV_TAM_SFTP_USER }}@${{ env.SERVER_URL }}
-      - name: Export products to Algolia
-        working-directory: ./Algolia/Script
+          echo "put -r public/* /public_html/" | sftp -v -i ~/.ssh/github_actions_ssh_key ${{ secrets.NEW_TEST_ENV_TAM_SFTP_USER }}@${{ env.SERVER_URL }} 
+      - name: Ejecutar export_products.sh
         run: |
-          chmod +x export_products.sh
-          ./export_products.sh
+          chmod +x ./Algolia/Script/export_products.sh
+          ./Algolia/Script/export_products.sh
           

@@ -6,17 +6,18 @@ ACCESS_TOKEN="YOXBZ5FkOdbzosHpzUX49zPvKCC_2VZW-GYbNVIcqb8"
 ALGOLIA_APP_ID="IN6J4FC7B1"
 ALGOLIA_API_KEY="fc490f6be6dc5dd3308da42b12362b7d"
 ALGOLIA_INDEX_NAME="tam_page_french"
+ALGOLIA_INDEX_NAME_EN="tam_page_english"
 
 PAGE_SIZE=1000
 SKIP=0
 PAGE=1
 FILES=()
 
-echo "⬇️ Comenzando descarga de productos…"
+echo "⬇️ Starting product download…"
 
 while true; do
   FILE="products_raw_${PAGE}.json"
-  echo "⬇️ Descargando página $PAGE (registros $SKIP a $((SKIP + PAGE_SIZE - 1)))…"
+  echo "⬇️ Downloading page $PAGE (records $SKIP to $((SKIP + PAGE_SIZE - 1)))…"
   curl -s \
     "https://cdn.contentful.com/spaces/$SPACE_ID/environments/master/entries?access_token=$ACCESS_TOKEN&limit=$PAGE_SIZE&include=3&skip=$SKIP" \
     > "$FILE"
@@ -25,7 +26,7 @@ while true; do
   FILES+=("$FILE")
 
   if [ "$COUNT" -lt "$PAGE_SIZE" ]; then
-    echo "📄 Última página ($COUNT registros)."
+    echo "📄 Last page ($COUNT records)."
     break
   fi
 
@@ -33,7 +34,7 @@ while true; do
   PAGE=$((PAGE + 1))
 done
 
-echo "🔗 Uniendo JSONs…"
+echo "🔗 Merging JSONs…"
 
 jq -s '
   {
@@ -45,7 +46,7 @@ jq -s '
   }
 ' "${FILES[@]}" > products_raw.json
 
-echo "🎯 Transformando JSON para Algolia..."
+echo "🎯 Transforming JSON for Algolia…"
 
 jq -r '
   def slugOrEmpty($entry):
@@ -134,13 +135,13 @@ jq -r '
   ]
 ' products_raw.json > products_algolia.json
 
-echo "✅ Exportado a products_algolia.json"
+echo "✅ Exported to products_algolia.json"
 
-echo "📦 Preparando datos para Algolia…"
+echo "📦 Preparing data for Algolia…"
 
 jq '{ requests: [.[] | { action: "addObject", body: . }] }' products_algolia.json > products_batch.json
 
-echo "🚀 Enviando datos a Algolia…"
+echo "🚀 Sending data to Algolia (fr)…"
 
 curl -s -X POST \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
@@ -149,4 +150,15 @@ curl -s -X POST \
   --data-binary @products_batch.json \
   "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME/batch"
 
-echo "✅ Datos enviados a Algolia."
+echo "✅ Data sent to French index: $ALGOLIA_INDEX_NAME."
+
+echo "🚀 Sending data to Algolia (en)…"
+
+curl -s -X POST \
+  -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
+  -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
+  -H "Content-Type: application/json" \
+  --data-binary @products_batch.json \
+  "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME_EN/batch"
+
+echo "✅ Data sent to English index: $ALGOLIA_INDEX_NAME_EN."
