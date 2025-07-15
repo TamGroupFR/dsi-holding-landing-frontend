@@ -1,0 +1,48 @@
+name: Build and deploy TAM Production
+
+on:
+  push:
+    paths:
+      - 'tam/**'
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      purpose:
+        description: 'Please fill the purpose of manual trigger'
+        required: true
+        default: ''
+  repository_dispatch:
+    types: ['contentful.deploy']
+
+env:
+  SERVER_URL: "phpstack-693884-2341953.cloudwaysapps.com"
+  GATSBY_CONTENTFUL_SPACE_ID: 'xbq8te6l92zd'
+  GATSBY_CONTENTFUL_ACCESS_TOKEN: ${{ secrets.GATSBY_CONTENTFUL_ACCESS_TOKEN_PROD }}
+  GATSBY_ALGOLIA_APP_ID: 'IN6J4FC7B1'
+  GATSBY_ALGOLIA_SEARCH_KEY: ${{ secrets.GATSBY_ALGOLIA_SEARCH_KEY_PROD }}
+  GATSBY_ALGOLIA_ADMIN_KEY: ${{ secrets.GATSBY_ALGOLIA_ADMIN_KEY_PROD }}
+  GATSBY_ALGOLIA_INDEX_FR: tam_page_french
+  GATSBY_ALGOLIA_INDEX_EN: tam_page_english
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check Algolia env vars
+        run: |
+          echo "Algolia APP ID: $GATSBY_ALGOLIA_APP_ID"
+          if [ -z "$GATSBY_ALGOLIA_ADMIN_KEY" ]; then
+            echo "Algolia Admin Key is not defined"
+            exit 1
+          else
+            echo "Algolia Admin Key is defined"
+          fi
+
+      - name: Ejecutar export_products.sh
+        run: |
+          chmod +x ./Algolia/Script/export_products.sh
+          ./Algolia/Script/export_products.sh
