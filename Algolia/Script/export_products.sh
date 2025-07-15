@@ -1,5 +1,9 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+FILES_DIR="$SCRIPT_DIR/../Files"
+mkdir -p "$FILES_DIR"
+
 SPACE_ID="xbq8te6l92zd"
 ACCESS_TOKEN="YOXBZ5FkOdbzosHpzUX49zPvKCC_2VZW-GYbNVIcqb8"
 
@@ -26,7 +30,7 @@ FILES=()
 for ((i=0; i<PAGES; i++)); do
   SKIP=$((i * LIMIT))
   echo "⬇️ Descargando página $((i+1)) ($SKIP-$((SKIP + LIMIT -1)))..."
-  FILE="../Files/products_raw_$((i+1)).json"
+  FILE="$FILES_DIR/products_raw_$((i+1)).json"
   curl -s "https://cdn.contentful.com/spaces/$SPACE_ID/environments/master/entries?access_token=$ACCESS_TOKEN&limit=$LIMIT&include=3&skip=$SKIP" > "$FILE"
   FILES+=("$FILE")
 done
@@ -41,7 +45,7 @@ jq -s '
     Asset: (map(.includes.Asset // []) | add)
   }
 }
-' "${FILES[@]}" > ../Files/products_raw.json
+' "${FILES[@]}" > "$FILES_DIR/products_raw.json"
 
 echo "🎯 Transformando JSON para Algolia..."
 
@@ -151,13 +155,13 @@ def getFileUrl($root; $fileId):
     }
   ]
 )
-' ../Files/products_raw.json > products_algolia.json
+' "$FILES_DIR/products_raw.json" > products_algolia.json
 
 echo "✅ Exportado a products_algolia.json"
 
 # Transformar products_algolia.json al formato batch de Algolia
 echo "🔄 Transformando JSON a formato batch para Algolia..."
-jq '{ requests: [ .[] | { action: "addObject", body: . } ] }' products_algolia.json > ../Files/products_algolia_batch.json
+jq '{ requests: [ .[] | { action: "addObject", body: . } ] }' products_algolia.json > "$FILES_DIR/products_algolia_batch.json"
 
 # Subir batch al índice francés
 echo "⬆️ Subiendo batch al índice francés ($ALGOLIA_INDEX_NAME)..."
@@ -166,7 +170,7 @@ RESPONSE_FR=$(curl -s -o /dev/null -w "%{http_code}" \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
   -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
   -H "Content-Type: application/json" \
-  --data-binary @../Files/products_algolia_batch.json \
+  --data-binary @"$FILES_DIR/products_algolia_batch.json" \
   "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME/batch")
 if [ "$RESPONSE_FR" -ge 200 ] && [ "$RESPONSE_FR" -lt 300 ]; then
   echo "✅ Batch subido correctamente al índice francés."
@@ -181,7 +185,7 @@ RESPONSE_EN=$(curl -s -o /dev/null -w "%{http_code}" \
   -H "X-Algolia-API-Key: $ALGOLIA_API_KEY" \
   -H "X-Algolia-Application-Id: $ALGOLIA_APP_ID" \
   -H "Content-Type: application/json" \
-  --data-binary @../Files/products_algolia_batch.json \
+  --data-binary @"$FILES_DIR/products_algolia_batch.json" \
   "https://$ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/$ALGOLIA_INDEX_NAME_EN/batch")
 if [ "$RESPONSE_EN" -ge 200 ] && [ "$RESPONSE_EN" -lt 300 ]; then
   echo "✅ Batch subido correctamente al índice inglés."
