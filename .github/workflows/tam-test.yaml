@@ -12,7 +12,7 @@ on:
         required: true
         default: ''
   repository_dispatch:
-    types: ['contentful.deploy']
+    types: ['contentful.deploy-dev']
 
 env:
   SERVER_URL: "phpstack-693884-2341939.cloudwaysapps.com"
