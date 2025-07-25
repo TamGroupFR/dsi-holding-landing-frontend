@@ -6,12 +6,7 @@ on:
       - 'tam/**'
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      purpose:
-        description: 'Please fill the purpose of manual trigger'
-        required: true
-        default: ''
+  workflow_dispatch: 
   repository_dispatch:
     types: ['contentful.deploy']
 
