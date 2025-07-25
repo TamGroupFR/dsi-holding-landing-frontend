@@ -5,7 +5,7 @@ on:
     paths:
       - 'tam/**'
     branches:
-      - main
+      - master
   workflow_dispatch:
     inputs:
       purpose:
