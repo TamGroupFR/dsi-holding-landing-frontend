@@ -28,6 +28,7 @@ env:
 
 jobs:
   build_and_deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.action == 'contentful.deploy'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -70,4 +71,3 @@ jobs:
         working-directory: ./tam
         run: |
           echo "put -r public/* /public_html/" | sftp -i ~/.ssh/github_actions_ssh_key ${{ secrets.NEW_PROD_ENV_TAM_SFTP_USER }}@${{ env.SERVER_URL }}
-
